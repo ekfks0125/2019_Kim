@@ -1,0 +1,79 @@
+########################################
+# Spreadsheet xlsx data reading setting
+########################################
+require(xlsx)
+#function for data.frame from xlsx to convert numberic class
+setting.data.frame <- function(data){
+  # to convert numberic class
+  step1 <- as.data.frame(sapply(data, as.character))
+  step1 <- as.data.frame(sapply(step1, function(x) as.numeric(gsub(" ","",x))))
+  
+  # remove wrong characterreading
+  colnames(step1) <- gsub("[Xx]","", colnames(step1))
+  colnames(step1) <- gsub("[.]"," ", colnames(step1))
+  
+  #set rownames
+  rownames(step1) <- rownames(data)
+  print(step1)
+}
+
+
+############################
+# haetmap (Figure 1A and 1B) 
+############################
+require(superheat)
+require(xlsx)
+#function for data.frame from xlsx to convert numberic class
+setting.data.frame <- function(data){
+  # to convert numberic class
+  step1 <- as.data.frame(sapply(data, as.character))
+  step1 <- as.data.frame(sapply(step1, function(x) as.numeric(gsub(" ","",x))))
+  
+  # remove wrong characterreading
+  colnames(step1) <- gsub("[Xx]","", colnames(step1))
+  colnames(step1) <- gsub("[.]"," ", colnames(step1))
+  
+  #set rownames
+  rownames(step1) <- rownames(data)
+  print(step1)
+}
+
+# reading fig1 A source file
+fig1a_source <- read.xlsx2(file = "/home/heuklang/다운로드/source data fig 1a and b.xlsx", 
+                           sheetIndex = "fig 1a", startRow = 3, endRow = 25, row.names=1)
+
+# data class stabilization
+fig1a <- setting.data.frame(fig1a_source)
+
+#drawing fig1 A
+superheat(fig1a, 
+          row.dendrogram = F, 
+          col.dendrogram = T,
+          dist.method = "minkowski",
+          left.label.text.size = 4,
+          bottom.label.text.size = 4,
+          order.rows =  order(fig1a$`20 Week`),
+          grid.hline.col = "white",
+          grid.vline.col = "white",
+          bottom.label.text.angle = 90
+)
+
+# reading fig1 B source file
+fig1b_source <- read.xlsx2(file = "/home/heuklang/다운로드/source data fig 1a and b.xlsx", 
+                           sheetIndex = "fig 1b", startRow = 4, endRow = 27, row.names=1) 
+
+# data class stabilization
+fig1b <- setting.data.frame(fig1b_source)
+
+#drawing fig1 B
+superheat(fig1b,
+          row.dendrogram = F, 
+          col.dendrogram = T,
+          dist.method = "minkowski",
+          left.label.text.size = 4,
+          bottom.label.text.size = 4,
+          order.rows =  order(fig1b$`20 Weeks`),
+          grid.hline.col = "white",
+          grid.vline.col = "white",
+          bottom.label.text.angle = 90)
+

@@ -1,0 +1,73 @@
+########################################
+# Spreadsheet xlsx data reading setting
+########################################
+require(xlsx)
+#function for data.frame from xlsx to convert numberic class
+setting.data.frame <- function(data){
+  # to convert numberic class
+  step1 <- as.data.frame(sapply(data, as.character))
+  step1 <- as.data.frame(sapply(step1, function(x) as.numeric(gsub(" ","",x))))
+  
+  # remove wrong characterreading
+  colnames(step1) <- gsub("[Xx]","", colnames(step1))
+  colnames(step1) <- gsub("[.]"," ", colnames(step1))
+  
+  #set rownames
+  rownames(step1) <- rownames(data)
+  print(step1)
+}
+
+
+############################
+# pyani viualization 
+#####################
+# pyani detail usage are discribed at 'https://github.com/widdowquinn/pyani'
+# ANIm_percentage_identity.tab were created by pyani ver. 0.2.8
+# GCF_001434355.1_ASM143435v1_genomic	S. anulatus ATCC 11523
+
+# strain name : NCBI Assembly ID
+# S. globisporus C-1027 : ASM26134v2
+# S4-7 : ?????
+# SF7B6 : In this study
+# SP6C4 : In this study
+# GCF_000720875.1_ASM72087v1_genomic	S. globisporus subsp. globisporus
+# S._griseus_NBRC_13350	S. griseus NBRC 13350
+# S. achromogenes NRRL B-2120 : ASM72083v1	
+# S. davaonensis JCM 4913 : ASM34932v1	
+# S. venezuelae ATCC 10712 : ASM25323v1	 
+
+require(superheat)
+
+# reading 'ANIm_percentage_identity.tab'
+fig2d_source <- read.csv("/home/heuklang/ani_m_DR/ANIm_percentage_identity.tab", sep="\t")
+rownames(fig2d_source) <- gsub("_"," ", fig2d_source$X)
+colnames(fig2d_source) <- gsub("_"," ", colnames(fig2d_source))
+
+fig2d <- fig2d_source[,-1]
+
+# set the text colors 
+fig2d.color <- ifelse(fig2d > 0.86, "black", "white")
+# convert to matrix
+fig2d.color <- matrix(fig2d.color, ncol = ncol(fig2d))
+
+fig2d
+fig2d.color
+
+superheat(fig2d*100,
+          row.dendrogram = T, 
+          col.dendrogram = T,
+          dist.method = "minkowski",
+          left.label.text.size = 3,
+          bottom.label.text.size = 3,
+          grid.hline.col = "white",
+          grid.vline.col = "white",
+          X.text = round(as.matrix(fig2d*100), 3),
+          X.text.col = fig2d.color,
+          X.text.size = 2.5,
+          X.text.angle = 12,
+          bottom.label.text.angle = 90
+)
+
+
+####################
+
